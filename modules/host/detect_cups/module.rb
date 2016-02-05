@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -24,15 +24,9 @@ class Detect_cups < BeEF::Core::Command
         port = $3
         session_id = @datastore['beefhook']
         type = 'CUPS'
-        cid = @datastore['cid'].to_i
-        if BeEF::Filters.is_valid_ip?(ip) && BeEF::Core::Models::NetworkService.all(:hooked_browser_id => session_id, :proto => proto, :ip => ip, :port => port, :type => type).empty?
+        if BeEF::Filters.is_valid_ip?(ip)
           print_debug("Hooked browser found 'CUPS' [proto: #{proto}, ip: #{ip}, port: #{port}]")
-          r = BeEF::Core::Models::NetworkService.new(:hooked_browser_id => session_id, :proto => proto, :ip => ip, :port => port, :type => type, :cid => cid)
-          r.save
-          if BeEF::Core::Models::NetworkHost.all(:hooked_browser_id => session_id, :ip => ip).empty?
-            r = BeEF::Core::Models::NetworkHost.new(:hooked_browser_id => session_id, :ip => ip, :cid => cid)
-            r.save
-          end
+          BeEF::Core::Models::NetworkService.add(:hooked_browser_id => session_id, :proto => proto, :ip => ip, :port => port, :type => type)
         end
       end
     end

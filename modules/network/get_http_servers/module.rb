@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -32,15 +32,9 @@ class Get_http_servers < BeEF::Core::Command
         port = $3
         url = $4
         session_id = @datastore['beefhook']
-        cid = @datastore['cid'].to_i
         if !ip.nil? && BeEF::Filters.is_valid_ip?(ip)
           print_debug("Hooked browser found HTTP Server [proto: #{proto}, ip: #{ip}, port: #{port}]")
-          r = BeEF::Core::Models::NetworkService.new(:hooked_browser_id => session_id, :proto => proto, :ip => ip, :port => port, :type => "HTTP Server", :cid => cid)
-          r.save
-          if BeEF::Core::Models::NetworkHost.all(:hooked_browser_id => session_id, :ip => ip).empty?
-            r = BeEF::Core::Models::NetworkHost.new(:hooked_browser_id => session_id, :ip => ip, :cid => cid)
-            r.save
-          end
+          BeEF::Core::Models::NetworkService.add(:hooked_browser_id => session_id, :proto => proto, :ip => ip, :port => port, :type => "HTTP Server")
         end
       end
 

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -31,17 +31,13 @@ class Ping_sweep < BeEF::Core::Command
     if configuration.get("beef.extension.network.enable") == true
 
       session_id = @datastore['beefhook']
-      cid = @datastore['cid'].to_i
 
       # save the network host
       if @datastore['results'] =~ /host=([\d\.]+) is alive/
         ip = $1
         if BeEF::Filters.is_valid_ip?(ip)
-          if BeEF::Core::Models::NetworkHost.all(:hooked_browser_id => session_id, :ip => ip).empty? # prevent duplicates
-            print_debug("Hooked browser has network interface #{ip}")
-            r = BeEF::Core::Models::NetworkHost.new(:hooked_browser_id => session_id, :ip => ip, :cid => cid)
-            r.save
-          end
+          print_debug("Hooked browser has network interface #{ip}")
+          BeEF::Core::Models::NetworkHost.add(:hooked_browser_id => session_id, :ip => ip)
         end
       end
     end

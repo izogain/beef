@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -31,7 +31,9 @@ module BeEF
           # create new SSL context and disable CA chain validation
           if @config.get("#{@config_prefix}.use_tls")
             @ctx = OpenSSL::SSL::SSLContext.new
-            @ctx.verify_mode = OpenSSL::SSL::VERIFY_NONE # In case the SMTP server uses a self-signed cert, we proceed anyway
+            if not @config.get("#{@config_prefix}.verify_ssl")
+              @ctx.verify_mode = OpenSSL::SSL::VERIFY_NONE # In case the SMTP server uses a self-signed cert, we proceed anyway
+            end
             @ctx.ssl_version = "TLSv1"
           end
 

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -33,7 +33,7 @@ module API
       #NOTE: order counts! make sure you know what you're doing if you add files
       esapi = %w(esapi/Class.create.js esapi/jquery-1.6.4.min.js esapi/jquery-encoder-0.1.0.js)
       ux =  %w(ui/common/beef_common.js ux/PagingStore.js ux/StatusBar.js ux/TabCloseMenu.js)
-      panel = %w(ui/panel/common.js ui/panel/DistributedEngine.js ui/panel/PanelStatusBar.js ui/panel/tabs/ZombieTabDetails.js ui/panel/tabs/ZombieTabLogs.js ui/panel/tabs/ZombieTabCommands.js ui/panel/tabs/ZombieTabRider.js ui/panel/tabs/ZombieTabXssRays.js wterm/wterm.jquery.js ui/panel/tabs/ZombieTabIpec.js ui/panel/tabs/ZombieTabAutorun.js ui/panel/PanelViewer.js ui/panel/DataGrid.js ui/panel/MainPanel.js ui/panel/ZombieTab.js ui/panel/ZombieTabs.js ui/panel/zombiesTreeList.js ui/panel/ZombiesMgr.js ui/panel/tabs/ZombieTabNetwork.js ui/panel/Logout.js ui/panel/WelcomeTab.js ui/panel/ModuleSearching.js)
+      panel = %w(ui/panel/common.js ui/panel/DistributedEngine.js ui/panel/PanelStatusBar.js ui/panel/tabs/ZombieTabDetails.js ui/panel/tabs/ZombieTabLogs.js ui/panel/tabs/ZombieTabCommands.js ui/panel/tabs/ZombieTabRider.js ui/panel/tabs/ZombieTabXssRays.js wterm/wterm.jquery.js ui/panel/tabs/ZombieTabIpec.js ui/panel/tabs/ZombieTabAutorun.js ui/panel/PanelViewer.js ui/panel/DataGrid.js ui/panel/MainPanel.js ui/panel/ZombieTab.js ui/panel/ZombieTabs.js ui/panel/zombiesTreeList.js ui/panel/ZombiesMgr.js ui/panel/tabs/ZombieTabNetwork.js ui/panel/tabs/ZombieTabRTC.js ui/panel/Logout.js ui/panel/WelcomeTab.js ui/panel/ModuleSearching.js)
 
       global_js = esapi + ux + panel
 
@@ -86,19 +86,16 @@ module API
       media_dir = File.dirname(__FILE__)+'/../media/'
       beef_server.mount("#{bp}/media", Rack::File.new(media_dir))
 
-      
       # mount the favicon file, if we're not imitating a web server.
       if !config.get("beef.http.web_server_imitation.enable")
-        beef_server.mount('/favicon.ico', Rack::File.new("#{media_dir}#{config.get("beef.extension.admin_ui.favicon_dir")}/#{config.get("beef.extension.admin_ui.favicon_file_name")}"))
+        BeEF::Core::NetworkStack::Handlers::AssetHandler.instance.bind(
+            "/extensions/admin_ui/media#{config.get("beef.extension.admin_ui.favicon_dir")}/#{config.get("beef.extension.admin_ui.favicon_file_name")}",
+            '/favicon.ico', 'ico')
       end
 
       self.build_javascript_ui beef_server
     end
-
-
-    
   end
-  
 end
 end
 end

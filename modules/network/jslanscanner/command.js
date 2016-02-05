@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+// Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 // Browser Exploitation Framework (BeEF) - http://beefproject.com
 // See the file 'doc/COPYING' for copying permission
 //
@@ -10,6 +10,7 @@ beef.execute(function() {
 	if(!beef.browser.isFF() && !beef.browser.isS()){
 		beef.debug("[command #<%= @command_id %>] Browser is not supported.");
 		beef.net.send("<%= @command_url %>", <%= @command_id %>, "fail=unsupported browser");
+		return;
 	}
 
 //------------------------------------------------------------------------------------------

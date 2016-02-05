@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -296,7 +296,6 @@ class ShellInterface
         ['Browser Components', 'VBScript',           'VBScriptEnabled'],
         ['Browser Components', 'PhoneGap',           'HasPhonegap'],
         ['Browser Components', 'Google Gears',       'HasGoogleGears'],
-        ['Browser Components', 'Silverlight',        'HasSilverlight'],
         ['Browser Components', 'Web Sockets',        'HasWebSocket'],
         ['Browser Components', 'QuickTime',          'HasQuickTime'],
         ['Browser Components', 'RealPlayer',         'HasRealPlayer'],
@@ -391,7 +390,8 @@ class ShellInterface
           'hostname' => x['hostname'].to_s,
           'type'     => x['type'].to_s,
           'os'       => x['os'].to_s,
-          'mac'      => x['mac'].to_s
+          'mac'      => x['mac'].to_s,
+          'lastseen' => x['lastseen'].to_s
         })
       end
     end

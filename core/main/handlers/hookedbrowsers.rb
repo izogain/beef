@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -78,6 +78,13 @@ module Handlers
         # @note add all available command module instructions to the response
         zombie_commands = BeEF::Core::Models::Command.all(:hooked_browser_id => hooked_browser.id, :instructions_sent => false)
         zombie_commands.each{|command| add_command_instructions(command, hooked_browser)}
+
+        # TODO this is not considering WebSocket channel, as data is sent from core/main/handlers/modules/command.rb if WS is enabled
+        are_executions = BeEF::Core::AutorunEngine::Models::Execution.all(:is_sent => false, :session => hook_session_id)
+        are_executions.each do |are_exec|
+          @body += are_exec.mod_body
+          are_exec.update(:is_sent => true, :exec_time => Time.new.to_i)
+        end
 
         # @note We dynamically get the list of all browser hook handler using the API and register them
         BeEF::API::Registrar.instance.fire(BeEF::API::Server::Hook, 'pre_hook_send', hooked_browser, @body, @params, request, response)

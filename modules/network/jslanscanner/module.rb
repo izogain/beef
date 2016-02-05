@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -24,21 +24,17 @@ class Fingerprint_routers < BeEF::Core::Command
         port = $3
         service = $4
         session_id = @datastore['beefhook']
-        cid = @datastore['cid'].to_i
-        if !ip.nil? && BeEF::Filters.is_valid_ip?(ip) && BeEF::Core::Models::NetworkService.all(:hooked_browser_id => session_id, :proto => proto, :ip => ip, :port => port, :type => service).empty?
+        if BeEF::Filters.is_valid_ip?(ip)
           print_debug("Hooked browser found network service " + service + " [proto: #{proto}, ip: #{ip}, port: #{port}]")
-          r = BeEF::Core::Models::NetworkService.new(:hooked_browser_id => session_id, :proto => proto, :ip => ip, :port => port, :type => service, :cid => cid)
-          r.save
+          BeEF::Core::Models::NetworkService.add(:hooked_browser_id => session_id, :proto => proto, :ip => ip, :port => port, :type => service)
         end
       elsif @datastore['results'] =~ /^ip=(.+)&device=(.+)/
         ip = $1
         device = $2
         session_id = @datastore['beefhook']
-        cid = @datastore['cid'].to_i
-        if !ip.nil? && BeEF::Filters.is_valid_ip?(ip) && BeEF::Core::Models::NetworkHost.all(:hooked_browser_id => session_id, :ip => ip, :type => device).empty?
+        if BeEF::Filters.is_valid_ip?(ip)
           print_debug("Hooked browser found network device " + device + " [ip: #{ip}]")
-          r = BeEF::Core::Models::NetworkHost.new(:hooked_browser_id => session_id, :ip => ip, :type => device, :cid => cid)
-          r.save
+          BeEF::Core::Models::NetworkHost.add(:hooked_browser_id => session_id, :ip => ip, :type => device)
         end
       end
     end

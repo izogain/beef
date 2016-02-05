@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -19,7 +19,7 @@ class TC_Jools < Test::Unit::TestCase
         return new Jools([]);"
         jools_obj = victim.execute_script(script)
         assert_not_nil jools_obj
-        victim.reset_session!
+        victim.driver.browser.close
     end
 
     #test simple jools rule example
@@ -44,6 +44,7 @@ class TC_Jools < Test::Unit::TestCase
             return result.state;"
        result = victim.execute_script(script)
        assert_equal result,'on'
+       victim.driver.browser.close
     end
 
     #test jools chaining example
@@ -110,5 +111,6 @@ class TC_Jools < Test::Unit::TestCase
        assert_not_equal results[1]['color'], 'green'
        assert_equal results[2]['color'],'yellow'
        assert_not_equal results[3]['color'], 'yellow'
+       victim.driver.browser.close
     end
 end

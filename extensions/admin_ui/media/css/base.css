@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+ * Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
  * Browser Exploitation Framework (BeEF) - http://beefproject.com
  * See the file 'doc/COPYING' for copying permission
  */
@@ -80,6 +80,12 @@
    background-image: url(../images/icons/xssrays.png);
 }
 
+.zombie-tree-ctxMenu-rtc {
+  background-image: url(../images/icons/network.png);
+  background-size: 24px 24px;
+  background-repeat: no-repeat;
+}
+
 .zombie-tree-ctxMenu-delete {
    background-image: url(../images/icons/delete.png);
    background-size: 32px 32px;
@@ -128,6 +134,12 @@
 
 .network-host-ctxMenu-router {
    background-image: url(../images/icons/router.png);
+   background-size: 16px 16px;
+   background-repeat: no-repeat;
+}
+
+.network-host-ctxMenu-proxy {
+   background-image: url(../images/icons/proxy.png);
    background-size: 16px 16px;
    background-repeat: no-repeat;
 }

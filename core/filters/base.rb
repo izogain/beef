@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -22,7 +22,7 @@ module Filters
   # @return [Boolean] Whether or not the only characters in str are specified in chars
   def self.only?(chars, str)
     regex = Regexp.new('[^' + chars + ']')
-    regex.match(str).nil?
+    regex.match(str.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')).nil?
   end
 
   # Check if one or more characters in 'chars' are in 'str'
@@ -31,7 +31,7 @@ module Filters
   # @return [Boolean] Whether one of the characters exists in the string
   def self.exists?(chars, str)
     regex = Regexp.new(chars)
-    not regex.match(str).nil?
+    not regex.match(str.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')).nil?
   end
 
   # Check for null char
@@ -139,6 +139,25 @@ module Filters
       end ? true : false
     end
 
+    valid
+  end
+
+  # Checks if the given string is a valid private IP address
+  # @param [String] ip string for testing
+  # @return [Boolean] true if the string is a valid private IP address, otherwise false
+  # @note Includes RFC1918 private IPv4, private IPv6, and localhost 127.0.0.0/8,
+  #       but does not include local-link addresses.
+  def self.is_valid_private_ip?(ip)
+    return false unless is_valid_ip?(ip)
+    return ip =~ /\A(^127\.)|(^192\.168\.)|(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^::1$)|(^[fF][cCdD])\z/ ? true : false
+  end
+
+  # Checks if the given string is a valid TCP port
+  # @param [String] port string for testing
+  # @return [Boolean] true if the string is a valid TCP port, otherwise false
+  def self.is_valid_port?(port)
+    valid = false
+    valid = true if port.to_i > 0 && port.to_i < 2**16
     valid
   end
 

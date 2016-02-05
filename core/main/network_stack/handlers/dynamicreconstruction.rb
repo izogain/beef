@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -32,14 +32,17 @@ module BeEF
                     'Content-Type' => 'text/javascript',
                     'Access-Control-Allow-Origin' => '*',
                     'Access-Control-Allow-Methods' => 'POST, GET'
-
-            PQ << {
+            begin
+              PQ << {
                 :beefhook => params[:bh],
                 :stream_id => Integer(params[:sid]),
                 :packet_id => Integer(params[:pid]),
                 :packet_count => Integer(params[:pc]),
                 :data => params[:d]
-            }
+              }
+            rescue TypeError, ArgumentError => e
+              print_error "Hooked browser returned an invalid argument: #{e}"
+            end
 
             Thread.new {
               check_packets()

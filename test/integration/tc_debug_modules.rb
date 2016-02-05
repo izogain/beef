@@ -1,10 +1,10 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
 require 'test/unit'
-require 'rest_client'
+require 'rest-client'
 require 'json'
 require '../common/test_constants'
 require '../common/beef_test'

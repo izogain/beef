@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Copyright (c) 2006-2016 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -10,14 +10,19 @@ module BeEF
 
         class Raw
 
-	        def initialize(status, header={}, body)
+	        def initialize(status, header={}, body=nil)
 	        	@status  = status
-	                @header  = header
-	                @body    = body
+	          @header  = header
+						@body    = body
 	        end
 
 	        def call(env)
-	            [@status, @header, @body]
+	            # [@status, @header, @body]
+						@response = Rack::Response.new(
+								body = @body,
+								status = @status,
+								header = @header
+						)
 	        end
 
 	        private
